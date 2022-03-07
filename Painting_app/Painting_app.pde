@@ -12,6 +12,7 @@ color white = #FFFFFF;
 color black = #000000;
 color gray = #808080;
 color draw;
+color stroke;
 button b1 = new button(10, 10, 80, 30, red);
 button b2 = new button(10, 50, 80, 30, orange);
 button b3 = new button(10, 90, 80, 30, yellow);
@@ -49,13 +50,61 @@ void draw() {
   rect( 0, 0, 100, 800);
   rect(100, 0, 1100, 75); 
   b1.draw();
+   if ( mouseX > 10 && mouseX < 90 && mouseY > 50 && mouseY < 80) {
+    stroke = #FFFFFF;
+  }
+  else {
+    stroke = 0;
+  }
   b2.draw();
+  if ( mouseX > 10 && mouseX < 90 && mouseY > 90 && mouseY < 120) {
+    stroke = #FFFFFF;
+  }
+  else {
+     stroke = 0;
+  }
   b3.draw();
+   if ( mouseX > 10 && mouseX < 90 && mouseY > 130 && mouseY < 160) {
+    stroke = #FFFFFF;
+  }
+  else {
+    stroke = 0;
+  }
   b4.draw();
+ if ( mouseX > 10 && mouseX < 90 && mouseY > 170 && mouseY < 200) {
+    stroke = #FFFFFF;
+  }
+  else {
+    stroke = 0;
+  }
   b5.draw();
+  if ( mouseX > 10 && mouseX < 90 && mouseY > 210 && mouseY < 240) {
+    stroke = #FFFFFF;
+  }
+  else {
+    stroke = 0;
+  }
   b6.draw();
+  if ( mouseX > 10 && mouseX < 90 && mouseY > 250 && mouseY < 280) {
+    stroke = #FFFFFF;
+  }
+  else {
+    stroke = 0;
+  }
   b7.draw();
+  if ( mouseX > 10 && mouseX < 90 && mouseY > 290 && mouseY < 320) {
+    stroke = #FFFFFF;
+  }
+  else {
+    stroke = 0;
+  }
   b8.draw();
+  if ( mouseX > 10 && mouseX < 90 && mouseY > 10 && mouseY < 40) {
+    stroke = #FFFFFF;
+  }
+  else {
+    stroke = 0;
+  }
   //b9.draw();
   stroke(black);
   fill( gray);
@@ -70,7 +119,7 @@ void draw() {
   fill(black);
   s.draw();
   s2.draw();
-  image(GTA, 370, 20, 50, 50);
+  //image(GTA, 370, 20, 50, 50);
   fill(gray);
   rect( 10, 680, 80, 30);
   fill(white);
@@ -98,11 +147,11 @@ class button {
    
    public void draw() {
      fill(clr);
+     stroke(stroke);
      rect( xpos, ypos, xwidth, xheight);
      if (mousePressed) {
        if (mouseX > xpos && mouseX < (xpos + xwidth) && mouseY > ypos && mouseY < (ypos + xheight)) {
          draw = clr;
-         
        }
      }
   }
