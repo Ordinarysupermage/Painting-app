@@ -128,7 +128,6 @@ void draw() {
   rect( 10, 730, 80, 30);
   fill(white);
   text("Save", 50, 740);
-  
   //fill(0);
   //text( "x: " + mouseX + " y: " + mouseY, mouseX, mouseY);
 }
@@ -199,9 +198,11 @@ void mousePressed() {
 void mouseReleased() {
   controlSlider();
   controlSlider2();
+  if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
   stroke(draw);
   strokeWeight(thickness);
   line(pmouseX, pmouseY, mouseX, mouseY);
+  }
   if (mouseX > 10 && mouseX < 90 && mouseY > 680 && mouseY <710) {
     selectInput("Click an image to load", "openImage");
   }
@@ -213,9 +214,11 @@ void mouseReleased() {
 void mouseDragged() {
   controlSlider();
   controlSlider2();
+  if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
   stroke(draw);
   strokeWeight(thickness);
   line(pmouseX, pmouseY, mouseX, mouseY);
+   }
 }
 
 void keyPressed() {
