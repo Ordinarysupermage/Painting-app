@@ -1,13 +1,16 @@
 //Jerry Feng
 //2-3
 //2022-02-28
-PImage GTA;
+
+PGraphics canvas, preview, toolbar;
+PImage GTA, circleIcon, lineIcon;
 color red = #FF0000;
 color orange = #FFB700;
 color yellow = #FFFF00;
 color green = #00FF00;
 color blue = #0000FF;
-color pink = #FFC0CB; 
+color pink = #FFC0CB;
+color purple = #800080;
 color white = #FFFFFF;
 color black = #000000;
 color gray = #808080;
@@ -19,7 +22,7 @@ button b3 = new button(10, 90, 80, 30, yellow);
 button b4 = new button(10, 130, 80, 30, green);
 button b5 = new button(10, 170, 80, 30, blue);
 button b6 = new button(10, 210, 80, 30, pink);
-button b7 = new button(10, 250, 80, 30, white);
+button b7 = new button(10, 250, 80, 30, purple);
 button b8 = new button(10, 290, 80, 30, black);
 button b9 = new button(10, 620, 80, 30, gray);
 slider s = new slider(470);
@@ -29,26 +32,38 @@ float shade;
 float drawShade;
 boolean refresh = false;
 
-void setup() { 
+void setup() {
   size( 1200, 800);
+  canvas = createGraphics (1200, 800);
+  preview = createGraphics (1200, 800);
+  toolbar = createGraphics ( 1200, 800);
+
   shade = 0;
   background(white);
   GTA = loadImage("Mc.png");
+  circleIcon = loadImage("circle2.png");
+  //lineIcon = loadImage("");
 }
 
 void draw() {
-  if (refresh){
+  if (refresh) {
     background(white);
     refresh = false;
   }
   shade = map(s.ypos, 350, 595, 0, 225);
   thickness = map(s2.xpos, 135, 335, 1, 50);
   drawShade = map(s.ypos, 350, 595, red, orange);
-  strokeWeight(5);
-  stroke(black);
-  fill(gray);
-  rect( 0, 0, 100, 800);
-  rect(100, 0, 1100, 75); 
+
+  toolbar.beginDraw();
+  imageMode(CORNER);
+  toolbar.strokeWeight(5);
+  toolbar.stroke(black);
+  toolbar.fill(gray);
+  toolbar.rect( 0, 0, 100, 800);
+  toolbar.rect(100, 0, 1100, 75);
+  imageMode(CENTER);
+  toolbar.image(circleIcon, 400, 15, 50, 50);
+  imageMode(CORNER);
   b1.draw();
    if ( mouseX > 10 && mouseX < 90 && mouseY > 50 && mouseY < 80) {
     stroke = #FFFFFF;
@@ -106,83 +121,85 @@ void draw() {
     stroke = 0;
   }
   //b9.draw();
-  stroke(black);
-  fill( gray);
-  rect(10, 630, 80, 30);
-  stroke(white);
-  fill(white);
-  textAlign( CENTER, CENTER);
-  textSize(25);
-  text("New", 50, 640);
-  strokeWeight(5);
-  stroke(black);
-  fill(black);
+  toolbar.stroke(black);
+  toolbar.fill(gray);
+  toolbar.rect(10, 630, 80, 30);
+  toolbar.stroke(white);
+  toolbar.fill(white);
+  toolbar.textAlign( CENTER, CENTER);
+  toolbar.textSize(25);
+  toolbar.text("New", 50, 640);
+  toolbar.strokeWeight(5);
+  toolbar.stroke(black);
+  toolbar.fill(black);
   s.draw();
   s2.draw();
   //image(GTA, 370, 20, 50, 50);
-  fill(gray);
-  rect( 10, 680, 80, 30);
-  fill(white);
-  text("Load", 50, 690);
-  fill(gray);
-  rect( 10, 730, 80, 30);
-  fill(white);
-  text("Save", 50, 740);
+  toolbar.fill(gray);
+  toolbar.rect( 10, 680, 80, 30);
+  toolbar.fill(white);
+  toolbar.text("Load", 50, 690);
+  toolbar.fill(gray);
+  toolbar.rect( 10, 730, 80, 30);
+  toolbar.fill(white);
+  toolbar.text("Save", 50, 740);
+  toolbar.endDraw();
+  image(toolbar, 0,0 );
   //fill(0);
   //text( "x: " + mouseX + " y: " + mouseY, mouseX, mouseY);
 }
 
 class button {
-   int xpos, ypos, xwidth, xheight;
-   color clr;
-   
-   public button(int x, int y, int w, int h, color c) {
-     xpos = x;
-     ypos = y;
-     xwidth = w;
-     xheight = h;
-     clr = c;
-   }
-   
-   public void draw() {
-     fill(clr);
-     stroke(stroke);
-     rect( xpos, ypos, xwidth, xheight);
-     if (mousePressed) {
-       if (mouseX > xpos && mouseX < (xpos + xwidth) && mouseY > ypos && mouseY < (ypos + xheight)) {
-         draw = clr;
-       }
-     }
+  int xpos, ypos, xwidth, xheight;
+  color clr;
+
+  public button(int x, int y, int w, int h, color c) {
+    xpos = x;
+    ypos = y;
+    xwidth = w;
+    xheight = h;
+    clr = c;
+  }
+
+  public void draw() {
+    toolbar.fill(clr);
+    toolbar.stroke(stroke);
+    toolbar.rect( xpos, ypos, xwidth, xheight);
+    if (mousePressed) {
+      if (mouseX > xpos && mouseX < (xpos + xwidth) && mouseY > ypos && mouseY < (ypos + xheight)) {
+        draw = clr;
+      }
+    }
   }
 }
 
 class slider {
   int ypos;
-  
+
   public slider(int y) {
     ypos = y;
   }
-  
-  public void draw(){
-  strokeWeight(8);
-  fill( draw);
-  line( 50, 340, 50, 600);
-  circle( 50, ypos, 60);
+
+  public void draw() {
+    toolbar.strokeWeight(8);
+    toolbar.fill(draw);
+    toolbar.line( 50, 340, 50, 600);
+    toolbar.circle( 50, ypos, 60);
   }
 }
 
 class slider2 {
   int xpos;
-  
+
   public slider2(int x) {
     xpos = x;
   }
-  
-  public void draw(){
-  strokeWeight(4);
-  fill(black);
-  line( 135, 40, 335, 40);
-  circle( xpos, 40, thickness);
+
+  public void draw() {
+    toolbar.strokeWeight(4);
+    toolbar.fill(black);
+    toolbar.line( 135, 40, 335, 40);
+    toolbar.circle( xpos, 40, thickness);
   }
 }
 
@@ -193,15 +210,15 @@ void mousePressed() {
     }
   }
 }
-  
+
 
 void mouseReleased() {
   controlSlider();
   controlSlider2();
   if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
-  stroke(draw);
-  strokeWeight(thickness);
-  line(pmouseX, pmouseY, mouseX, mouseY);
+    stroke(draw);
+    strokeWeight(thickness);
+    line(pmouseX, pmouseY, mouseX, mouseY);
   }
   if (mouseX > 10 && mouseX < 90 && mouseY > 680 && mouseY <710) {
     selectInput("Click an image to load", "openImage");
@@ -215,41 +232,41 @@ void mouseDragged() {
   controlSlider();
   controlSlider2();
   if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
-  stroke(draw);
-  strokeWeight(thickness);
-  line(pmouseX, pmouseY, mouseX, mouseY);
-   }
+    stroke(draw);
+    strokeWeight(thickness);
+    line(pmouseX, pmouseY, mouseX, mouseY);
+  }
 }
 
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
       if (s.ypos < 595) {
-      s.ypos = s.ypos +2;
+        s.ypos = s.ypos +2;
       }
     }
   }
-   if (key == CODED) {
+  if (key == CODED) {
     if (keyCode == UP) {
       if (s.ypos > 350) {
-      s.ypos = s.ypos -2;
+        s.ypos = s.ypos -2;
       }
     }
-   }
-   if (key == CODED) {
-     if (keyCode == LEFT) {
-       if (s2.xpos > 135) {
-         s2.xpos = s2.xpos -2;
-       }
-     }
-   }
-   if (key == CODED) {
-     if (keyCode == RIGHT) {
-       if (s2.xpos < 335) {
-         s2.xpos = s2.xpos +2;
-       }
-     }
-   }
+  }
+  if (key == CODED) {
+    if (keyCode == LEFT) {
+      if (s2.xpos > 135) {
+        s2.xpos = s2.xpos -2;
+      }
+    }
+  }
+  if (key == CODED) {
+    if (keyCode == RIGHT) {
+      if (s2.xpos < 335) {
+        s2.xpos = s2.xpos +2;
+      }
+    }
+  }
 }
 
 void controlSlider() {
@@ -281,3 +298,4 @@ void openImage(File f) {
     }
   }
 }
+
