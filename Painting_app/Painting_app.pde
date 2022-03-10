@@ -40,14 +40,14 @@ void setup() {
 
   shade = 0;
   background(white);
-  GTA = loadImage("Mc.png");
-  circleIcon = loadImage("circle2.png");
+  //GTA = loadImage("Mc.png");
+  //circleIcon = loadImage("circle2.png");
   //lineIcon = loadImage("");
 }
 
 void draw() {
   if (refresh) {
-    background(white);
+    //background(white);
     refresh = false;
   }
   shade = map(s.ypos, 350, 595, 0, 225);
@@ -62,62 +62,54 @@ void draw() {
   toolbar.rect( 0, 0, 100, 800);
   toolbar.rect(100, 0, 1100, 75);
   imageMode(CENTER);
-  toolbar.image(circleIcon, 400, 15, 50, 50);
+  //toolbar.image(circleIcon, 400, 15, 50, 50);
   imageMode(CORNER);
   b1.draw();
-   if ( mouseX > 10 && mouseX < 90 && mouseY > 50 && mouseY < 80) {
+  if ( mouseX > 10 && mouseX < 90 && mouseY > 50 && mouseY < 80) {
     stroke = #FFFFFF;
-  }
-  else {
+  } else {
     stroke = 0;
   }
   b2.draw();
   if ( mouseX > 10 && mouseX < 90 && mouseY > 90 && mouseY < 120) {
     stroke = #FFFFFF;
-  }
-  else {
-     stroke = 0;
+  } else {
+    stroke = 0;
   }
   b3.draw();
-   if ( mouseX > 10 && mouseX < 90 && mouseY > 130 && mouseY < 160) {
+  if ( mouseX > 10 && mouseX < 90 && mouseY > 130 && mouseY < 160) {
     stroke = #FFFFFF;
-  }
-  else {
+  } else {
     stroke = 0;
   }
   b4.draw();
- if ( mouseX > 10 && mouseX < 90 && mouseY > 170 && mouseY < 200) {
+  if ( mouseX > 10 && mouseX < 90 && mouseY > 170 && mouseY < 200) {
     stroke = #FFFFFF;
-  }
-  else {
+  } else {
     stroke = 0;
   }
   b5.draw();
   if ( mouseX > 10 && mouseX < 90 && mouseY > 210 && mouseY < 240) {
     stroke = #FFFFFF;
-  }
-  else {
+  } else {
     stroke = 0;
   }
   b6.draw();
   if ( mouseX > 10 && mouseX < 90 && mouseY > 250 && mouseY < 280) {
     stroke = #FFFFFF;
-  }
-  else {
+  } else {
     stroke = 0;
   }
   b7.draw();
   if ( mouseX > 10 && mouseX < 90 && mouseY > 290 && mouseY < 320) {
     stroke = #FFFFFF;
-  }
-  else {
+  } else {
     stroke = 0;
   }
   b8.draw();
   if ( mouseX > 10 && mouseX < 90 && mouseY > 10 && mouseY < 40) {
     stroke = #FFFFFF;
-  }
-  else {
+  } else {
     stroke = 0;
   }
   //b9.draw();
@@ -144,7 +136,11 @@ void draw() {
   toolbar.fill(white);
   toolbar.text("Save", 50, 740);
   toolbar.endDraw();
-  image(toolbar, 0,0 );
+  
+  background(255);
+  image(canvas, 0, 0);
+  image(preview, 0 ,0);
+  image(toolbar, 0, 0 );
   //fill(0);
   //text( "x: " + mouseX + " y: " + mouseY, mouseX, mouseY);
 }
@@ -205,8 +201,10 @@ class slider2 {
 
 void mousePressed() {
   if (mouseX > 10 && mouseX < 90) {
-    if ( mouseY > 620 && mouseY < 650) {
-      refresh = true;
+    if ( mouseY > 620 && mouseY < 660) {
+      canvas.beginDraw();
+      canvas.clear();
+      canvas.endDraw();
     }
   }
 }
@@ -216,9 +214,11 @@ void mouseReleased() {
   controlSlider();
   controlSlider2();
   if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
-    stroke(draw);
-    strokeWeight(thickness);
-    line(pmouseX, pmouseY, mouseX, mouseY);
+    canvas.beginDraw();
+    canvas.stroke(draw);
+    canvas.strokeWeight(thickness);
+    canvas.line(pmouseX, pmouseY, mouseX, mouseY);
+    canvas.endDraw();
   }
   if (mouseX > 10 && mouseX < 90 && mouseY > 680 && mouseY <710) {
     selectInput("Click an image to load", "openImage");
@@ -232,9 +232,11 @@ void mouseDragged() {
   controlSlider();
   controlSlider2();
   if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
-    stroke(draw);
-    strokeWeight(thickness);
-    line(pmouseX, pmouseY, mouseX, mouseY);
+    canvas.beginDraw();
+    canvas.stroke(draw);
+    canvas.strokeWeight(thickness);
+    canvas.line(pmouseX, pmouseY, mouseX, mouseY);
+    canvas.endDraw();
   }
 }
 
@@ -298,4 +300,3 @@ void openImage(File f) {
     }
   }
 }
-
