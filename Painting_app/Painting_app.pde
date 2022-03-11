@@ -1,9 +1,9 @@
-//Jerry Feng //<>//
+//Jerry Feng //<>// //<>//
 //2-3
 //2022-02-28
 
 PGraphics canvas, preview, toolbar;
-PImage GTA, circleIcon, lineIcon, filledcircle, rect_TOOL, filledrect;
+PImage GTA, circleIcon, lineIcon, filledcircle, rect_TOOL, filledrect, fillbackground, tool;
 color red = #FF0000;
 color orange = #FFB700;
 color yellow = #FFFF00;
@@ -25,19 +25,23 @@ button b6 = new button(10, 210, 80, 30, pink);
 button b7 = new button(10, 250, 80, 30, purple);
 button b8 = new button(10, 290, 80, 30, black);
 button b9 = new button(10, 620, 80, 30, gray);
-slider s = new slider(470);
+slider s = new slider(375);
 slider2 s2= new slider2(185);
+eraser e = new eraser(1100);
 final int CIRCLE_TOOL = 0;
 final int SQUIGGLE_TOOL = 1;
 final int STAMP_TOOL = 2;
 final int filledCircle_TOOL = 3;
 final int recta_TOOL = 4;
 final int filledrect_TOOL = 5;
+final int eraser_TOOL = 6;
 int currentTool = SQUIGGLE_TOOL;
 int initialX, initialY;
+int signal;
 float currentWeight;
 color currentColor;
 float thickness;
+float erasersize;
 float shade;
 float drawShade;
 float size;
@@ -58,6 +62,9 @@ void setup() {
   filledcircle = loadImage("fill.jpg");
   rect_TOOL = loadImage("rect.png");
   filledrect = loadImage("filledrect.png");
+  fillbackground = loadImage("fillbackground.png");
+  tool = loadImage("tool.png");
+  signal = 0;
 }
 
 void draw() {
@@ -65,15 +72,30 @@ void draw() {
     background(white);
     refresh = false;
   }
+  if (mousePressed) {
+    if ( mouseX > 10 && mouseX < 70 && mouseY > 445 && mouseY < 505) {
+      canvas.beginDraw();
+      canvas.background(draw);
+      canvas.endDraw();
+    }
+  }
   shade = map(s.ypos, 350, 595, 0, 225);
   thickness = map(s2.xpos, 135, 335, 1, 50);
   drawShade = map(s.ypos, 350, 595, red, orange);
   size = map(s2.xpos, 135, 335, 1, 500);
+  erasersize = map(e.xpos, 1000, 1150, 1, 60);
 
   toolbar.beginDraw();
   toolbar.strokeWeight(5);
   toolbar.stroke(black);
   toolbar.fill(gray);
+  //if (mousePressed) {
+  //  if ( mouseX > 10 && mouseX < 70 && mouseY > 540 && mouseY < 600) {
+  //    toolbar.fill(draw);
+  //  }
+  //} else {
+  //  toolbar.fill(gray);
+  //}
   toolbar.rect( 0, 0, 100, 800);
   toolbar.rect(100, 0, 1100, 75);
   if ( mouseX > 400 && mouseX < 450 && mouseY > 15 && mouseY < 65) {
@@ -175,6 +197,7 @@ void draw() {
   toolbar.fill(black);
   s.draw();
   s2.draw();
+  e.draw();
   if ( mouseX > 555 && mouseX< 610 && mouseY > 15 && mouseY< 65) {
     toolbar.fill(green);
   } else {
@@ -185,6 +208,7 @@ void draw() {
       toolbar.stroke(white);
     }
   }
+  toolbar.stroke(black);
   toolbar.rect( 555, 15, 55, 50);
   toolbar.image(GTA, 560, 20, 50, 50);
   toolbar.fill(gray);
@@ -240,7 +264,25 @@ class slider {
   public void draw() {
     toolbar.strokeWeight(8);
     toolbar.fill(draw);
-    toolbar.line( 50, 340, 50, 600);
+    toolbar.imageMode(CENTER);
+    toolbar.rectMode(CENTER);
+    if ( mouseX > 10 && mouseX < 70 && mouseY > 445 && mouseY < 505) {
+      toolbar.stroke(white);
+    } else {
+      toolbar.stroke(black);
+    }
+    toolbar.rect(50, 475, 60, 60);
+    toolbar.image(fillbackground, 50, 475, 60, 60);
+    if ( mouseX > 10 && mouseX < 70 && mouseY > 540 && mouseY < 600) {
+      toolbar.stroke(white);
+    } else {
+      toolbar.stroke(black);
+    }
+    toolbar.rect(50, 570, 60, 60);
+    toolbar.image(tool, 50, 570, 60, 60);
+    toolbar.rectMode(CORNER);
+    toolbar.imageMode(CORNER);
+    toolbar.stroke(black);
     toolbar.circle( 50, ypos, 60);
   }
 }
@@ -259,6 +301,29 @@ class slider2 {
     toolbar.circle( xpos, 40, thickness);
   }
 }
+
+class eraser {
+  int xpos;
+
+  public eraser(int x) {
+    xpos = x;
+  }
+
+  public void draw() {
+    toolbar.strokeWeight(4);
+    toolbar.fill(white);
+    toolbar.stroke(black);
+    toolbar.line(1000, 40, 1150, 40);
+    toolbar.circle(xpos, 40, 30);
+    if (dist( 950, 40, mouseX, mouseY) < erasersize) {
+      toolbar.stroke(white);
+    } else {
+      toolbar.stroke(black);
+    }
+    toolbar.circle(950, 40, erasersize);
+  }
+}
+
 
 void mousePressed() {
   if (mouseX > 10 && mouseX < 90) {
@@ -284,18 +349,37 @@ void mousePressed() {
   } else {
     toolbar.stroke(black);
   }
+  if ( mouseX > 10 && mouseX < 70 && mouseY > 540 && mouseY < 600) {
+    toolbar.beginDraw();
+    toolbar.fill(draw);
+    toolbar.rect( 0, 0, 100, 800);
+    toolbar.rect(100, 0, 1100, 75);
+    toolbar.endDraw();
+  }
 }
 
 
 void mouseReleased() {
-  controlSlider();
   controlSlider2();
+  controleraser();
+  if ( mouseX > 10 && mouseX < 70 && mouseY > 540 && mouseY < 600) {
+    signal = 100;
+  }
 
   if ( currentTool == SQUIGGLE_TOOL) {
     if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
       canvas.beginDraw();
       canvas.stroke(draw);
       canvas.strokeWeight(thickness);
+      canvas.line(pmouseX, pmouseY, mouseX, mouseY);
+      canvas.endDraw();
+    }
+  }
+  if ( currentTool == eraser_TOOL) {
+    if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
+      canvas.beginDraw();
+      canvas.stroke(white);
+      canvas.strokeWeight(erasersize);
       canvas.line(pmouseX, pmouseY, mouseX, mouseY);
       canvas.endDraw();
     }
@@ -317,6 +401,9 @@ void mouseReleased() {
   }
   if ( mouseX > 800 && mouseX < 880 && mouseY > 15 && mouseY < 65) {
     currentTool = filledrect_TOOL;
+  }
+  if (dist( 950, 40, mouseX, mouseY) < erasersize) {
+    currentTool = eraser_TOOL;
   }
   if ( currentTool == CIRCLE_TOOL) {
     if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
@@ -387,13 +474,22 @@ void mouseReleased() {
 }
 
 void mouseDragged() {
-  controlSlider();
   controlSlider2();
+  controleraser();
   if ( currentTool == SQUIGGLE_TOOL) {
     if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
       canvas.beginDraw();
       canvas.stroke(draw);
       canvas.strokeWeight(thickness);
+      canvas.line(pmouseX, pmouseY, mouseX, mouseY);
+      canvas.endDraw();
+    }
+  }
+  if ( currentTool == eraser_TOOL) {
+    if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
+      canvas.beginDraw();
+      canvas.stroke(white);
+      canvas.strokeWeight(erasersize);
       canvas.line(pmouseX, pmouseY, mouseX, mouseY);
       canvas.endDraw();
     }
@@ -455,15 +551,15 @@ void mouseDragged() {
 void keyPressed() {
   if (key == CODED) {
     if (keyCode == DOWN) {
-      if (s.ypos < 595) {
-        s.ypos = s.ypos +2;
+      if (e.xpos > 1000) {
+        e.xpos = e.xpos -2;
       }
     }
   }
   if (key == CODED) {
     if (keyCode == UP) {
-      if (s.ypos > 350) {
-        s.ypos = s.ypos -2;
+      if (e.xpos < 1150) {
+        e.xpos = e.xpos +2;
       }
     }
   }
@@ -492,6 +588,12 @@ void controlSlider() {
 void controlSlider2() {
   if ( mouseY > 10 && mouseY < 60  && mouseX > 135 && mouseX < 335) {
     s2.xpos = mouseX;
+  }
+}
+
+void controleraser() {
+  if (mouseY> 10 && mouseY < 60 && mouseX > 1000 && mouseX < 1150) {
+    e.xpos = mouseX;
   }
 }
 
