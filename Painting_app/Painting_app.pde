@@ -362,6 +362,9 @@ void mousePressed() {
 void mouseReleased() {
   controlSlider2();
   controleraser();
+  preview.beginDraw();
+  preview.clear();
+  preview.endDraw();
   if ( mouseX > 10 && mouseX < 70 && mouseY > 540 && mouseY < 600) {
     signal = 100;
   }
