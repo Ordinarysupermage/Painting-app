@@ -27,6 +27,13 @@ button b8 = new button(10, 290, 80, 30, black);
 button b9 = new button(10, 620, 80, 30, gray);
 slider s = new slider(470);
 slider2 s2= new slider2(185);
+final int CIRCLE_TOOL = 0;
+final int SQUIGGLE_TOOL = 1;
+final int STAMP_TOOL = 2;
+int currentTool = SQUIGGLE_TOOL;
+int initialX, initialY;
+float currentWeight;
+color currentColor;
 float thickness;
 float shade;
 float drawShade;
@@ -37,17 +44,18 @@ void setup() {
   canvas = createGraphics (1200, 800);
   preview = createGraphics (1200, 800);
   toolbar = createGraphics ( 1200, 800);
-
+  currentColor = #000000;
+  currentWeight = 3;
   shade = 0;
   background(white);
-  //GTA = loadImage("Mc.png");
-  //circleIcon = loadImage("circle2.png");
-  //lineIcon = loadImage("");
+  GTA = loadImage("Mc.png");
+  circleIcon = loadImage("circle2.png");
+  lineIcon = loadImage("squiggy.png");
 }
 
 void draw() {
   if (refresh) {
-    //background(white);
+    background(white);
     refresh = false;
   }
   shade = map(s.ypos, 350, 595, 0, 225);
@@ -62,8 +70,12 @@ void draw() {
   toolbar.rect( 0, 0, 100, 800);
   toolbar.rect(100, 0, 1100, 75);
   imageMode(CENTER);
-  //toolbar.image(circleIcon, 400, 15, 50, 50);
+  toolbar.image(circleIcon, 400, 15, 50, 50);
+  toolbar.strokeWeight(2);
+  toolbar.rect(480, 15, 50, 50);
+  toolbar.image(lineIcon, 480, 15, 50, 50);
   imageMode(CORNER);
+  toolbar.strokeWeight(5);
   b1.draw();
   if ( mouseX > 10 && mouseX < 90 && mouseY > 50 && mouseY < 80) {
     stroke = #FFFFFF;
@@ -126,8 +138,20 @@ void draw() {
   toolbar.fill(black);
   s.draw();
   s2.draw();
-  //image(GTA, 370, 20, 50, 50);
+  if ( mouseX > 555 && mouseX< 610 && mouseY > 15 && mouseY< 65) {
+    toolbar.fill(green);
+  } else {
+    toolbar.fill(#FFFFFF);
+  }
+  if (mousePressed) {
+    if ( mouseX > 555 && mouseX< 610 && mouseY > 15 && mouseY< 65) {
+      toolbar.stroke(white);
+    }
+  }
+  toolbar.rect( 555, 15, 55, 50);
+  toolbar.image(GTA, 560, 20, 50, 50);
   toolbar.fill(gray);
+  toolbar.stroke(black);
   toolbar.rect( 10, 680, 80, 30);
   toolbar.fill(white);
   toolbar.text("Load", 50, 690);
@@ -136,10 +160,10 @@ void draw() {
   toolbar.fill(white);
   toolbar.text("Save", 50, 740);
   toolbar.endDraw();
-  
+
   background(255);
   image(canvas, 0, 0);
-  image(preview, 0 ,0);
+  image(preview, 0, 0);
   image(toolbar, 0, 0 );
   //fill(0);
   //text( "x: " + mouseX + " y: " + mouseY, mouseX, mouseY);
@@ -181,7 +205,7 @@ class slider {
     toolbar.fill(draw);
     toolbar.line( 50, 340, 50, 600);
     toolbar.circle( 50, ypos, 60);
-  }
+  } //<>//
 }
 
 class slider2 {
@@ -205,7 +229,17 @@ void mousePressed() {
       canvas.beginDraw();
       canvas.clear();
       canvas.endDraw();
+      preview.beginDraw();
+      preview.clear();
+      preview.endDraw();
     }
+  }
+  initialX = mouseX;
+  initialY = mouseY;
+  if ( mouseX > 555 && mouseX< 610 && mouseY > 15 && mouseY< 65) {
+    toolbar.stroke(white);
+  } else {
+    toolbar.stroke(black);
   }
 }
 
@@ -213,12 +247,50 @@ void mousePressed() {
 void mouseReleased() {
   controlSlider();
   controlSlider2();
-  if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
-    canvas.beginDraw();
-    canvas.stroke(draw);
-    canvas.strokeWeight(thickness);
-    canvas.line(pmouseX, pmouseY, mouseX, mouseY);
-    canvas.endDraw();
+  if ( currentTool == SQUIGGLE_TOOL) {
+    if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
+      canvas.beginDraw();
+      canvas.stroke(draw);
+      canvas.strokeWeight(thickness);
+      canvas.line(pmouseX, pmouseY, mouseX, mouseY);
+      canvas.endDraw();
+    }
+  }
+  if ( mouseX > 400 && mouseX < 450 && mouseY > 15 & mouseY < 65) {
+    currentTool = CIRCLE_TOOL;
+  }
+  if ( mouseX > 480 && mouseX < 530 && mouseY > 15 & mouseY < 65) {
+    currentTool = SQUIGGLE_TOOL;
+  }
+  if (mouseX > 560 && mouseX < 610 && mouseY > 20 && mouseY < 70) {
+    currentTool = STAMP_TOOL;
+  }
+  if ( currentTool == CIRCLE_TOOL) {
+    if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
+      canvas.stroke(draw);
+      canvas.beginDraw();
+      canvas.ellipseMode(CORNER);
+      canvas.stroke(draw);
+      canvas.strokeWeight(thickness);
+      canvas.noFill();
+      canvas.ellipse(initialX, initialY, mouseX-initialX, mouseY-initialY);
+      canvas.ellipseMode(CENTER);
+      canvas.endDraw();
+    }
+  }
+  if ( currentTool == STAMP_TOOL) {
+    if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
+      canvas.beginDraw();
+      canvas.imageMode(CENTER);
+      canvas.image(GTA, mouseX, mouseY, 100, 100);
+      canvas.imageMode(CORNER);
+      canvas.endDraw();
+    }
+  }
+  if ( mouseX > 555 && mouseX< 610 && mouseY > 15 && mouseY< 65) {
+    toolbar.stroke(white);
+  } else {
+    toolbar.stroke(black);
   }
   if (mouseX > 10 && mouseX < 90 && mouseY > 680 && mouseY <710) {
     selectInput("Click an image to load", "openImage");
@@ -231,12 +303,27 @@ void mouseReleased() {
 void mouseDragged() {
   controlSlider();
   controlSlider2();
-  if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
-    canvas.beginDraw();
-    canvas.stroke(draw);
-    canvas.strokeWeight(thickness);
-    canvas.line(pmouseX, pmouseY, mouseX, mouseY);
-    canvas.endDraw();
+  if ( currentTool == SQUIGGLE_TOOL) {
+    if ( mouseX> 100 && mouseX< 1200 && mouseY > 75 && mouseY < 800) {
+      canvas.beginDraw();
+      canvas.stroke(draw);
+      canvas.strokeWeight(thickness);
+      canvas.line(pmouseX, pmouseY, mouseX, mouseY);
+      canvas.endDraw();
+    }
+  }
+  if (currentTool == CIRCLE_TOOL) {
+    preview.beginDraw();
+    if (mouseX > 100 && mouseX < 1200) {
+      preview.clear();
+    }
+    preview.ellipseMode(CORNER);
+    preview.stroke(draw);
+    preview.strokeWeight(thickness);
+    preview.noFill();
+    preview.ellipse(initialX, initialY, mouseX-initialX, mouseY-initialY);
+    preview.ellipseMode(CENTER);
+    preview.endDraw();
   }
 }
 
